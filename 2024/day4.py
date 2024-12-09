@@ -39,3 +39,14 @@ for i in data:
 licznik += occur_diagonal(data)
 licznik += occur_to_up_or_down(data)
 print(licznik)
+
+def occur_diagonal_x_mas(S):
+    counter = 0
+    for i in range(len(S)-2):
+        for j in range(len(S[i])-2):
+            tmp_str = S[i][j] + S[i][j+2] + S[i+1][j+1] + S[i+2][j] + S[i+2][j+2]
+            if tmp_str in ("MSAMS", "SMASM", "SMASM", "SSAMM", "MMASS"):
+                counter += 1
+    return counter
+
+print(occur_diagonal_x_mas(data))

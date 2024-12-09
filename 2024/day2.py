@@ -43,31 +43,19 @@ def is_safe(tab):
 
 
 def is_almost_safe(tab):
-    x = tab
-    tmp_tab = tab
-    for i in tab:
-        tmp_tab.remove(i)
-        print(tmp_tab, x)
+    for i in range(len(tab)):
+        tmp_tab = tab[:]
+        del tmp_tab[i]
         if is_safe(tmp_tab):
             return True
-        tmp_tab = x
     return False
-
-def permutations(tab):
-    result = []
-    for i in tab:
-        x = tab
-        result.append(i)
-print(permutations([3, 2, 1]))
-
 
 counter = 0
 counter2 = 0
 for i in data:
     if is_safe(to_array(i)):
         counter += 1
-print(counter)
+    if is_safe(to_array(i)) or is_almost_safe(to_array(i)):
+        counter2 += 1
+print(counter, counter2)
 
-x = to_array(data[3])
-print(x)
-print(is_almost_safe(x))

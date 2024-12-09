@@ -1,61 +1,81 @@
-file = open("day3.txt", "r")
-data = ""
-for line in file:
-    data = line.strip()
+import re
+
+
+with open("day3.txt", "r") as file:
+    data = file.read().strip()
+
 
 def mul(a, b):
     return a * b
 
-def is_digita(s):
-    if s in ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'):
-        return True
-    return False
 
 def is_correct(s):
+    if not (s.startswith("mul(") and s.endswith(")")):
+        return False
     tmp_s = s[4:-1]
-    streak = 0
-    comma_index = 0
-    while True:
-        if tmp_s[comma_index] == ',':
-            break
-        else:
-            comma_index += 1
-        if comma_index == len(tmp_s):
-            return False
-
-    left_segment = tmp_s[0:comma_index]
-    right_segment = tmp_s[comma_index+1:]
-    for i in left_segment:
-        if not is_digita(i):
-            return False
-    for i in right_segment:
-        if not is_digita(i):
-            return False
-    return True
+    if ',' not in tmp_s:
+        return False
+    left_segment, right_segment = tmp_s.split(',', 1)
+    return left_segment.isdigit() and right_segment.isdigit()
 
 
-
-instructions = []
-
-
-for i in range(len(data)-2):
-    if data[i] + data[i+1] + data[i+2] == 'mul':
-        index = i+3
-        tmp_str = data[i] + data[i+1] + data[i+2]
-        while True:
-            if data[i+3] != "(":
-                break
-            else:
-                tmp_str += data[index]
-                index += 1
-            if data[index] == ")":
-                tmp_str += ")"
-                instructions.append(tmp_str)
-                break
+pattern = r'mul\(\d+,\d+\)'
+instructions = re.findall(pattern, data)
 
 
 result = 0
-for i in instructions:
-    if is_correct(i):
-        result += eval(i)
+for instruction in instructions:
+    if is_correct(instruction):
+        numbers = instruction[4:-1].split(',')
+        a, b = int(numbers[0]), int(numbers[1])
+        result += mul(a, b)
+
+print(result)
+
+
+import re
+
+# Read and process the input data
+with open("day3.txt", "r") as file:
+    data = file.read().strip()
+
+# Function to perform multiplication
+def mul(a, b):
+    return a * b
+
+# Function to check if a "mul" instruction is syntactically correct
+def is_correct(s):
+    if not (s.startswith("mul(") and s.endswith(")")):
+        return False
+    tmp_s = s[4:-1]
+    if ',' not in tmp_s:
+        return False
+    left_segment, right_segment = tmp_s.split(',', 1)
+    return left_segment.isdigit() and right_segment.isdigit()
+
+# Define patterns for instructions
+mul_pattern = r'mul\(\d+,\d+\)'
+do_pattern = r'do\(\)'
+dont_pattern = r"don't\(\)"
+
+# Extract instructions in sequence
+instructions = re.findall(rf'{mul_pattern}|{do_pattern}|{dont_pattern}', data)
+
+# Initialize state and result
+mul_enabled = True
+result = 0
+
+# Process each instruction
+for instruction in instructions:
+    if instruction == 'do()':
+        mul_enabled = True
+    elif instruction == "don't()":
+        mul_enabled = False
+    elif is_correct(instruction):
+        if mul_enabled:
+            numbers = instruction[4:-1].split(',')
+            a, b = int(numbers[0]), int(numbers[1])
+            result += mul(a, b)
+
+# Output the final result
 print(result)
